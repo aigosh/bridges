@@ -3,12 +3,12 @@ from numpy.random import randint
 from numpy import iinfo
 import numpy as np
 from dfs import Color
-from util import group_by
+from util import call
 from itertools import combinations
 
 
 class Random2BridgeFinder:
-    def __init__(self, graph: Graph, sort=np.sort):
+    def __init__(self, graph: Graph, sort=sorted):
         self.graph = graph
         self.colors = None
         self.edge_codes = None
@@ -81,7 +81,7 @@ class Random2BridgeFinder:
         self.colors.update({node: Color.BLACK})
 
     def _get_bridges(self):
-        edges = sorted(self.graph.edges, key=lambda edge: self.edge_codes[edge])
+        edges = call(self.sort, self.graph.edges, key=lambda edge: self.edge_codes[edge])
         result = []
         i = 0
         while i < len(edges):
