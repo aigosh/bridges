@@ -1,6 +1,0 @@
-[
-  "test.py::test_dfs",
-  "test.py::test_bridge_finder__no_bridge",
-  "test.py::test_bridge_finder__one_bridge",
-  "test.py::test_random_search__one__two_bridge"
-]
