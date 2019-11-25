@@ -57,7 +57,7 @@ def test_bridge_finder__one_bridge():
     assert bridges == [(0, 5)]
 
 
-def test_random_search__one__two_bridge():
+def test_random_search():
     adj = np.array([
         [0, 1, 1, 0, 0, 1],
         [1, 0, 1, 1, 0, 0],
@@ -70,8 +70,8 @@ def test_random_search__one__two_bridge():
     finder = Random2BridgeFinder(graph)
     bridges = finder.search()
 
-    assert bridges[0][5] == bridges[1][3]
-    assert bridges[3][4] == bridges[4][5]
-    assert bridges[1][2] == bridges[2][0]
+    assert ((0, 5), (1, 3)) in bridges
+    assert ((3, 4), (4, 5)) in bridges
+    assert ((0, 2), (1, 2)) in bridges
+    assert len(bridges) == 3
 
-    assert bridges[0][1] != bridges[1][2]

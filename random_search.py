@@ -3,6 +3,8 @@ from numpy.random import randint
 from numpy import iinfo
 import numpy as np
 from dfs import Color
+from util import group_by
+from itertools import combinations
 
 
 class Random2BridgeFinder:
@@ -18,7 +20,8 @@ class Random2BridgeFinder:
 
         self._make_forest()
         self._fill_forest_codes()
-        return self.edge_codes
+
+        return self._get_bridges()
 
     def _get_initial_codes(self, value=None):
         nodes_count = len(self.graph)
@@ -76,3 +79,19 @@ class Random2BridgeFinder:
         self.edge_codes[parent][node] = code
 
         self.colors.update({node: Color.BLACK})
+
+    def _get_bridges(self):
+        edges = sorted(self.graph.edges, key=lambda edge: self.edge_codes[edge])
+        result = []
+        i = 0
+        while i < len(edges):
+            edge = edges[i]
+            code = self.edge_codes[edge]
+            part = []
+            while i < len(edges) and self.edge_codes[edges[i]] == code:
+                part.append(edges[i])
+                i += 1
+            if len(part) > 1:
+                result.extend(combinations(part, 2))
+
+        return result
