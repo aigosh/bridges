@@ -5,10 +5,12 @@ import numpy as np
 from dfs import Color
 from util import call
 from itertools import combinations
+from abstract import AbstractSearch
 
 
-class Random2BridgeFinder:
-    def __init__(self, graph: Graph, sort=sorted):
+class Random2BridgeFinder(AbstractSearch):
+    def __init__(self, graph: Graph, sort=sorted, **kwargs):
+        super().__init__(graph, sort=sort, **kwargs)
         self.graph = graph
         self.colors = None
         self.edge_codes = None
