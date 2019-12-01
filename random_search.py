@@ -9,24 +9,22 @@ from abstract import AbstractSearch
 
 
 class Random2BridgeFinder(AbstractSearch):
-    def __init__(self, graph: Graph, sort=sorted, **kwargs):
-        super().__init__(graph, sort=sort, **kwargs)
-        self.graph = graph
+    def __init__(self, sort=sorted):
         self.colors = None
         self.edge_codes = None
         self.edge_codes = None
         self.sort = sort
 
-    def search(self):
-        self.edge_codes = self._get_initial_codes()
+    def search(self, graph: Graph):
+        self.edge_codes = self._get_initial_codes(graph)
 
-        self._make_forest()
-        self._fill_forest_codes()
+        self._make_forest(graph)
+        self._fill_forest_codes(graph)
 
-        return self._get_bridges()
+        return self._get_bridges(graph)
 
-    def _get_initial_codes(self, value=None):
-        nodes_count = len(self.graph)
+    def _get_initial_codes(self, graph: Graph, value=None):
+        nodes_count = len(graph)
         shape = (nodes_count, nodes_count)
         dtype = np.int64
 
@@ -35,19 +33,19 @@ class Random2BridgeFinder(AbstractSearch):
 
         return np.full(shape, value, dtype=dtype)
 
-    def _make_forest(self):
+    def _make_forest(self, graph: Graph):
         self.colors = dict()
 
-        for i in range(len(self.graph.nodes)):
+        for i in range(len(graph.nodes)):
             if self.colors.get(i) is Color.WHITE.value:
-                self._make_tree(i)
+                self._make_tree(graph, i)
 
-    def _make_tree(self, node: int, parent: int = -1):
+    def _make_tree(self, graph: Graph, node: int, parent: int = -1):
         self.colors.update({node: Color.GRAY})
 
-        for neighbor in self.graph.neighbors(node):
+        for neighbor in graph.neighbors(node):
             if self.colors.get(neighbor) not in [Color.GRAY, Color.BLACK]:
-                self._make_tree(neighbor, node)
+                self._make_tree(graph, neighbor, node)
             else:
                 if neighbor != parent:
                     high = iinfo(np.int64).max
@@ -57,21 +55,21 @@ class Random2BridgeFinder(AbstractSearch):
 
         self.colors.update({node: Color.BLACK})
 
-    def _fill_forest_codes(self):
+    def _fill_forest_codes(self, graph: Graph):
         for bit_position in reversed(range(64)):
             self.colors = dict()
-            for i in range(len(self.graph.nodes)):
+            for i in range(len(graph.nodes)):
                 if self.colors.get(i) is Color.WHITE.value:
-                    self._fill_tree_codes(i, bit_position=bit_position)
+                    self._fill_tree_codes(graph, i, bit_position=bit_position)
 
-    def _fill_tree_codes(self, node: int, parent: int = -1, bit_position: int = 0):
+    def _fill_tree_codes(self, graph: Graph, node: int, parent: int = -1, bit_position: int = 0):
         self.colors.update({node: Color.GRAY})
 
-        for neighbor in self.graph.neighbors(node):
+        for neighbor in graph.neighbors(node):
             if self.colors.get(neighbor) not in [Color.GRAY, Color.BLACK]:
-                self._fill_tree_codes(neighbor, node, bit_position)
+                self._fill_tree_codes(graph, neighbor, node, bit_position)
 
-        neighbors = list(self.graph.neighbors(node))
+        neighbors = list(graph.neighbors(node))
         codes = np.array(list(filter(lambda x: x != None, self.edge_codes[node][neighbors])))
         bit = np.sum((codes >> bit_position) & 1) & 1
 
@@ -82,8 +80,8 @@ class Random2BridgeFinder(AbstractSearch):
 
         self.colors.update({node: Color.BLACK})
 
-    def _get_bridges(self):
-        edges = call(self.sort, self.graph.edges, key=lambda edge: self.edge_codes[edge])
+    def _get_bridges(self, graph: Graph):
+        edges = call(self.sort, graph.edges, key=lambda edge: self.edge_codes[edge])
         result = []
         i = 0
         while i < len(edges):
