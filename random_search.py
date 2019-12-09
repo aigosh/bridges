@@ -81,7 +81,7 @@ class Random2BridgeFinder(AbstractSearch):
         self.colors.update({node: Color.BLACK})
 
     def _get_bridges(self, graph: Graph):
-        edges = call(self.sort, graph.edges, key=lambda edge: self.edge_codes[edge])
+        edges = call(self.sort, graph.edges, key=lambda x: self.edge_codes[x])
         result = []
         i = 0
         while i < len(edges):

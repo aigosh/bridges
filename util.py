@@ -1,5 +1,5 @@
 from functools import partial
-from typing import List, Type
+from typing import List, Union
 from abstract import AbstractSearch
 from networkx import Graph
 from graph import generate_graph
@@ -31,14 +31,43 @@ def group_by(collection: List, key=lambda x: x):
     return result
 
 
-def measure_algorithm(Algo: Type[AbstractSearch], graphs: List[Graph], sort=None):
+def measure_algorithm(algo: AbstractSearch, graphs: List[Graph]):
     result = []
     for graph in graphs:
-        algo = Algo(graph, sort=sort)
         start = time()
-        algo.search()
+        algo.search(graph)
         end = time()
         duration = end - start
         result.append(duration)
         print(len(graph.nodes), duration)
     return result
+
+
+def identity(item):
+    return item
+
+
+def min_max(array: Union, key=None):
+    if key is None:
+        key = identity
+
+    min_key = call(key, array[0])
+    min_value = array[0]
+    max_key = call(key, array[0])
+    max_value = array[0]
+
+    for i in range(len(array) - 1):
+        item = array[i + 1]
+        k = call(key, item)
+        if k < min_key:
+            min_key = k
+            min_value = item
+        if k > max_key:
+            max_key = k
+            max_value = item
+
+    return min_key, max_key, min_value, max_value
+
+
+def get_step(min_value: int, max_value: int, steps: int):
+    return (max_value - min_value) / steps

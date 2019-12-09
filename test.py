@@ -7,7 +7,7 @@ from bridge_finder import BridgeFinder
 from random_search import Random2BridgeFinder
 from json import loads
 import matplotlib.pyplot as plt
-from sort import radix_sort
+from sort import radix_sort, bucket_sort
 
 
 def test_dfs():
@@ -74,5 +74,14 @@ def test_radix_sort():
     sorted_arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
     result = radix_sort(arr)
+
+    assert sorted_arr == result
+
+
+def test_bucket_sort():
+    arr = [8, 6, 7, 9, 0, 4, 5, 2, 3, 1]
+    sorted_arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+    result = bucket_sort(arr)
 
     assert sorted_arr == result
