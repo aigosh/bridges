@@ -7,6 +7,8 @@ def radix_sort(collection: Union, key=None, base=10):
     result = [None] * len(collection)
     if key is None:
         key = identity
+
+    collection = list(collection)
     max_item = max(collection, key=key)
     max_key = call(key, max_item)
     positions_count = int(np.log10(max_key)) + 1
@@ -20,7 +22,7 @@ def radix_sort(collection: Union, key=None, base=10):
         for i in range(1, len(counts)):
             counts[i] = counts[i] + counts[i - 1]
 
-        for item in reversed(list(collection)):
+        for item in reversed(collection):
             k = call(key, item)
             digit = _get_digit(k, base, position)
             counts[digit] -= 1
@@ -40,17 +42,18 @@ def bucket_sort(collection: Union, key=None):
     if key is None:
         key = identity
 
+    collection = list(collection)
     result = []
     min_value, max_value, _, _ = min_max(collection, key)
-    bucket_count = int(np.floor(np.log(max_value - min_value)) + 1)
+    bucket_count = np.floor(np.log(max_value - min_value)) + 1
     step = get_step(min_value, max_value, bucket_count)
 
-    buckets = [list() for _ in range(bucket_count)]
+    buckets = [[] for _ in range(int(bucket_count))]
 
     for item in collection:
         k = call(key, item)
         bucket = _get_bucket(k, min_value, step, bucket_count)
-        buckets[bucket].append(item)
+        buckets[int(bucket)].append(item)
 
     for bucket in buckets:
         part = sorted(bucket, key=key)
@@ -60,5 +63,5 @@ def bucket_sort(collection: Union, key=None):
 
 
 def _get_bucket(value: int, min_value: int, step: int, bucket_count: int):
-    index = int(np.floor((value - min_value) / step))
+    index = np.floor((value - min_value) / step)
     return min([bucket_count - 1, index])

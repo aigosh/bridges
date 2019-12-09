@@ -5,7 +5,7 @@ from util import measure_algorithm
 from bridge_finder import BridgeFinder
 from random_search import Random2BridgeFinder
 from sys import setrecursionlimit
-from sort import radix_sort
+from sort import radix_sort, bucket_sort
 
 if __name__ == '__main__':
     # graph = generate_graph(6, 0.3)
@@ -19,19 +19,24 @@ if __name__ == '__main__':
     bf = BridgeFinder()
     random_bf_std = Random2BridgeFinder()
     random_bf_radix = Random2BridgeFinder(sort=radix_sort)
-    random_bf_bucket = Random2BridgeFinder()
+    random_bf_bucket = Random2BridgeFinder(sort=bucket_sort)
 
-    # time = measure_algorithm(bf, graphs)
-    # plt.plot(sizes, time)
-    # plt.draw()
-    # plt.pause(120)
-    #
-    # time = measure_algorithm(random_bf_std, graphs)
-    # plt.plot(sizes, time)
-    # plt.draw()
-    # plt.pause(120)
+    time = measure_algorithm(bf, graphs)
+    plt.plot(sizes, time)
+    plt.draw()
+    plt.pause(120)
+
+    time = measure_algorithm(random_bf_std, graphs)
+    plt.plot(sizes, time)
+    plt.draw()
+    plt.pause(120)
 
     time = measure_algorithm(random_bf_radix, graphs)
+    plt.plot(sizes, time)
+    plt.draw()
+    plt.pause(120)
+
+    time = measure_algorithm(random_bf_bucket, graphs)
     plt.plot(sizes, time)
     plt.draw()
     plt.pause(120)
